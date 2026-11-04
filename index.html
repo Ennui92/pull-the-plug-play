@@ -79,13 +79,18 @@
       border: 1px solid var(--teal); padding: 12px 42px; font: inherit; font-size: 16px; letter-spacing: 4px;
       text-shadow: 0 0 8px var(--teal); }
     .overlay button:hover { background: rgba(65,242,214,.12); box-shadow: 0 0 18px rgba(65,242,214,.35); }
+    #charselect { display: flex; gap: 12px; }
+    .overlay button.charcard { display: flex; flex-direction: column; align-items: center; padding: 4px 10px 6px; font-size: 12px; opacity: .55; border-color: rgba(65,242,214,.35); text-shadow: none; }
+    .overlay button.charcard:hover { opacity: .85; }
+    .overlay button.charcard.picked { opacity: 1; border-color: var(--teal); background: rgba(65,242,214,.12); box-shadow: 0 0 14px rgba(65,242,214,.35); }
+    .charcard img { width: 96px; height: 132px; display: block; }
     .controls { font-size: 12px; opacity: .65; line-height: 2; letter-spacing: 1px; }
     #dead h1 { color: var(--red); text-shadow: 0 0 24px var(--red); }
     #dead .sub { color: var(--voice); }
     #dead button { color: var(--red); border-color: var(--red); text-shadow: 0 0 8px var(--red); }
     #paused { background: rgba(3,6,9,.6); cursor: pointer; }
   </style>
-  <script type="module" crossorigin src="./assets/main-hL89bnch.js"></script>
+  <script type="module" crossorigin src="./assets/main-CkSHVwid.js"></script>
 </head>
 <body>
   <div id="app"><canvas id="c"></canvas></div>
@@ -132,6 +137,10 @@
     <h1>PULL THE PLUG</h1>
     <div class="mission" id="missionchip">MISSION 1 &mdash; THE CRADLE</div>
     <div class="sub" id="menustory"></div>
+    <div id="charselect">
+      <button class="charcard" id="char-man" type="button"><img alt="" /><span>MAN</span></button>
+      <button class="charcard" id="char-woman" type="button"><img alt="" /><span>WOMAN</span></button>
+    </div>
     <button id="startbtn">ENTER THE CRADLE</button>
     <div class="controls">WASD &mdash; move &nbsp;&middot;&nbsp; SHIFT &mdash; run &nbsp;&middot;&nbsp; MOUSE &mdash; look &nbsp;&middot;&nbsp; CLICK &mdash; attack &nbsp;&middot;&nbsp; 1 / 2 &mdash; crowbar / fists &nbsp;&middot;&nbsp; SPACE &mdash; jump (&times;2) &nbsp;&middot;&nbsp; E &mdash; interact<br/>
       M &mdash; mute &nbsp;&middot;&nbsp; V &mdash; voice on/off &nbsp;&middot;&nbsp; B &mdash; piano track</div>
