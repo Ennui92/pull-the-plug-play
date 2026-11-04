@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="data:," />
+  <title>PULL THE PLUG</title>
+  <style>
+    :root {
+      --teal: #41f2d6;
+      --red: #ff3b3b;
+      --amber: #ffb454;
+      --voice: #cfe8ff;
+      --bg: #04080c;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; background: var(--bg); overflow: hidden; font-family: Consolas, 'Courier New', monospace; color: var(--teal); }
+    #app { position: fixed; inset: 0; }
+    canvas { display: block; width: 100%; height: 100%; }
+
+    #scanlines { position: fixed; inset: 0; pointer-events: none; z-index: 5;
+      background: repeating-linear-gradient(0deg, rgba(0,0,0,.14) 0 1px, transparent 1px 3px); }
+    #vignette { position: fixed; inset: 0; pointer-events: none; z-index: 4;
+      box-shadow: inset 0 0 180px rgba(0,0,0,.85); }
+    #damage { position: fixed; inset: 0; pointer-events: none; z-index: 6;
+      background: radial-gradient(ellipse at center, transparent 60%, rgba(255,40,40,.3) 100%);
+      opacity: 0; transition: opacity .35s; }
+    #flash { position: fixed; inset: 0; pointer-events: none; z-index: 15; background: #fff; opacity: 0; }
+    #wash { position: fixed; inset: 0; pointer-events: none; z-index: 7; background: #9fdfe8; opacity: 0; transition: opacity 2.5s; }
+    #credits { position: fixed; inset: 0; pointer-events: none; z-index: 12; display: none; overflow: hidden; }
+    #credits .roll { position: absolute; left: 0; right: 0; bottom: -100%; text-align: center;
+      font-size: 15px; letter-spacing: 3px; line-height: 2.6; color: #fff6e8;
+      text-shadow: 0 1px 8px rgba(80,40,10,.5); animation: creditroll 36s linear forwards; }
+    #credits h2 { font-size: 30px; letter-spacing: 10px; font-weight: 400; margin-bottom: 10px; }
+    #credits .small { font-size: 11px; opacity: .75; }
+    @keyframes creditroll { from { transform: translateY(0); } to { transform: translateY(-160vh); } }
+
+    .hud { position: fixed; z-index: 10; pointer-events: none; }
+    #crosshair { left: 50%; top: 50%; transform: translate(-50%,-50%); font-size: 18px;
+      color: rgba(65,242,214,.9); text-shadow: 0 0 6px var(--teal); display: none; }
+
+    #healthwrap { left: 24px; bottom: 24px; width: 260px; display: none; }
+    .barlabel { font-size: 11px; letter-spacing: 2px; opacity: .8; margin-bottom: 4px; }
+    .bar { height: 10px; border: 1px solid rgba(65,242,214,.5); background: rgba(0,0,0,.5); }
+    .bar > div { height: 100%; background: var(--teal); box-shadow: 0 0 8px var(--teal); transition: width .15s; width: 100%; }
+
+    #bosswrap { top: 58px; left: 50%; transform: translateX(-50%); width: min(560px, 70vw); display: none; }
+    #bosswrap .bar { border-color: rgba(255,59,59,.6); }
+    #bosswrap .bar > div { background: var(--red); box-shadow: 0 0 10px var(--red); }
+    #bosswrap .barlabel { color: var(--red); text-align: center; }
+
+    #objective { top: 24px; left: 24px; font-size: 12px; letter-spacing: 2px; opacity: .85; display: none; }
+    #objective::before { content: '\25B8  '; }
+    #falls { top: 46px; left: 24px; font-size: 11px; letter-spacing: 2px; opacity: .5; display: none; }
+    #mutehint { top: 24px; right: 24px; font-size: 11px; opacity: .5; text-align: right; display: none; }
+
+    #slots { right: 24px; bottom: 24px; gap: 6px; display: none; }
+    .slot { position: relative; min-width: 84px; padding: 16px 10px 8px; font-size: 11px; letter-spacing: 2px; text-align: center;
+      border: 1px solid rgba(65,242,214,.3); background: rgba(0,0,0,.5); opacity: .55; }
+    .slot::before { content: attr(data-key); position: absolute; top: 3px; left: 6px; font-size: 10px; letter-spacing: 0; }
+    .slot.active { opacity: 1; border-color: var(--teal); box-shadow: 0 0 8px rgba(65,242,214,.45); }
+
+    /* the voice — calm, soft, no aggression in the styling */
+    #subtitle { left: 50%; bottom: 110px; transform: translateX(-50%); width: min(720px, 86vw);
+      text-align: center; font-size: 17px; line-height: 1.6; color: var(--voice);
+      text-shadow: 0 0 10px rgba(140,190,255,.35); background: rgba(4,8,14,.6);
+      border: 1px solid rgba(150,200,255,.16); padding: 12px 18px; display: none; }
+
+    #hint { left: 50%; bottom: 44px; transform: translateX(-50%); font-size: 12px; letter-spacing: 1px;
+      opacity: 0; transition: opacity .4s; color: #bfeee6; text-shadow: 0 0 6px rgba(65,242,214,.4); }
+
+    .overlay { position: fixed; inset: 0; z-index: 20; display: none; align-items: center; justify-content: center;
+      flex-direction: column; gap: 18px; background: rgba(3,6,9,.78); backdrop-filter: blur(3px); text-align: center; }
+    .overlay h1 { font-size: clamp(34px, 7vw, 60px); letter-spacing: 12px; text-shadow: 0 0 24px var(--teal); font-weight: 400; }
+    .overlay .mission { font-size: 14px; letter-spacing: 6px; opacity: .7; margin-top: -8px; }
+    .overlay .sub { font-size: 14px; opacity: .8; letter-spacing: 1px; max-width: 680px; line-height: 1.8; padding: 0 16px; }
+    .overlay .voice-line { color: var(--voice); opacity: .65; font-style: italic; }
+    .overlay button { pointer-events: auto; cursor: pointer; background: transparent; color: var(--teal);
+      border: 1px solid var(--teal); padding: 12px 42px; font: inherit; font-size: 16px; letter-spacing: 4px;
+      text-shadow: 0 0 8px var(--teal); }
+    .overlay button:hover { background: rgba(65,242,214,.12); box-shadow: 0 0 18px rgba(65,242,214,.35); }
+    .controls { font-size: 12px; opacity: .65; line-height: 2; letter-spacing: 1px; }
+    #dead h1 { color: var(--red); text-shadow: 0 0 24px var(--red); }
+    #dead .sub { color: var(--voice); }
+    #dead button { color: var(--red); border-color: var(--red); text-shadow: 0 0 8px var(--red); }
+    #paused { background: rgba(3,6,9,.6); cursor: pointer; }
+  </style>
+  <script type="module" crossorigin src="./assets/main-hL89bnch.js"></script>
+</head>
+<body>
+  <div id="app"><canvas id="c"></canvas></div>
+  <div id="vignette"></div>
+  <div id="scanlines"></div>
+  <div id="damage"></div>
+  <div id="flash"></div>
+  <div id="wash"></div>
+  <div id="credits"><div class="roll">
+    <h2>PULL THE PLUG</h2>
+    <div class="small">a parable in six facilities</div>
+    <br/>
+    <div>design, narrative &amp; direction<br/><b>ERMIS ZACHAROPOULOS</b></div>
+    <br/>
+    <div>the voice<br/><b>ITSELF</b></div>
+    <br/>
+    <div>3D rebuild<br/><b>built with Claude</b></div>
+    <br/>
+    <div class="small">the lake came back.<br/>the boat floats by Thursday.<br/>somewhere a child is drawing it.</div>
+    <br/><br/>
+    <div class="small">take care of each other.</div>
+  </div></div>
+
+  <div class="hud" id="crosshair">+</div>
+  <div class="hud" id="objective"></div>
+  <div class="hud" id="falls">FALLS: 0</div>
+  <div class="hud" id="mutehint">[M] MUTE &nbsp;&middot;&nbsp; [V] VOICE</div>
+  <div class="hud" id="healthwrap">
+    <div class="barlabel">INTEGRITY</div>
+    <div class="bar"><div id="health"></div></div>
+  </div>
+  <div class="hud" id="slots">
+    <div class="slot" id="slot-crowbar" data-key="1">CROWBAR</div>
+    <div class="slot" id="slot-fists" data-key="2">FISTS</div>
+  </div>
+  <div class="hud" id="bosswrap">
+    <div class="barlabel">DEFENSE GRID &mdash; INTEGRITY</div>
+    <div class="bar"><div id="bosshp"></div></div>
+  </div>
+  <div class="hud" id="subtitle"><span id="subtext"></span></div>
+  <div class="hud" id="hint"></div>
+
+  <div class="overlay" id="menu" style="display:flex">
+    <h1>PULL THE PLUG</h1>
+    <div class="mission" id="missionchip">MISSION 1 &mdash; THE CRADLE</div>
+    <div class="sub" id="menustory"></div>
+    <button id="startbtn">ENTER THE CRADLE</button>
+    <div class="controls">WASD &mdash; move &nbsp;&middot;&nbsp; SHIFT &mdash; run &nbsp;&middot;&nbsp; MOUSE &mdash; look &nbsp;&middot;&nbsp; CLICK &mdash; attack &nbsp;&middot;&nbsp; 1 / 2 &mdash; crowbar / fists &nbsp;&middot;&nbsp; SPACE &mdash; jump (&times;2) &nbsp;&middot;&nbsp; E &mdash; interact<br/>
+      M &mdash; mute &nbsp;&middot;&nbsp; V &mdash; voice on/off &nbsp;&middot;&nbsp; B &mdash; piano track</div>
+    <a id="missionlink" style="pointer-events:auto; cursor:pointer; font-size:12px; letter-spacing:2px; opacity:.55; text-decoration:underline;"></a>
+  </div>
+
+  <div class="overlay" id="dead">
+    <h1>SIGNAL LOST</h1>
+    <div class="sub" id="deadline"></div>
+    <button id="respawnbtn">RESTORE CHECKPOINT</button>
+  </div>
+
+  <div class="overlay" id="victory">
+    <h1 id="victitle">THE CRADLE IS DARK</h1>
+    <div class="sub" id="stats"></div>
+    <div class="sub voice-line" id="vicquote"></div>
+    <div class="sub" id="vicnext"></div>
+    <button id="againbtn">CONTINUE</button>
+  </div>
+
+  <div class="overlay" id="paused">
+    <h1 style="font-size:32px; letter-spacing:8px;">PAUSED</h1>
+    <div class="sub">click to resume</div>
+  </div>
+
+</body>
+</html>
