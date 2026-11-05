@@ -90,7 +90,7 @@
     #dead button { color: var(--red); border-color: var(--red); text-shadow: 0 0 8px var(--red); }
     #paused { background: rgba(3,6,9,.6); cursor: pointer; }
   </style>
-  <script type="module" crossorigin src="./assets/main-CkSHVwid.js"></script>
+  <script type="module" crossorigin src="./assets/main-C3YSc6QT.js"></script>
 </head>
 <body>
   <div id="app"><canvas id="c"></canvas></div>
@@ -132,6 +132,7 @@
   </div>
   <div class="hud" id="subtitle"><span id="subtext"></span></div>
   <div class="hud" id="hint"></div>
+  <div class="hud" id="paper" style="display:none; left:50%; top:30%; transform:translateX(-50%); width:min(420px,80vw); padding:18px 20px; background:#d8d6cc; color:#20242a; font:13px/1.6 Consolas,monospace; border:1px solid #6a6e72;"><b style="display:block; margin-bottom:8px; letter-spacing:1px;"></b><p style="margin:0; white-space:pre-wrap;"></p></div>
 
   <div class="overlay" id="menu" style="display:flex">
     <h1>PULL THE PLUG</h1>
@@ -144,6 +145,7 @@
     <button id="startbtn">ENTER THE CRADLE</button>
     <div class="controls">WASD &mdash; move &nbsp;&middot;&nbsp; SHIFT &mdash; run &nbsp;&middot;&nbsp; MOUSE &mdash; look &nbsp;&middot;&nbsp; CLICK &mdash; attack &nbsp;&middot;&nbsp; 1 / 2 &mdash; crowbar / fists &nbsp;&middot;&nbsp; SPACE &mdash; jump (&times;2) &nbsp;&middot;&nbsp; E &mdash; interact<br/>
       M &mdash; mute &nbsp;&middot;&nbsp; V &mdash; voice on/off &nbsp;&middot;&nbsp; B &mdash; piano track</div>
+    <div id="quality" style="pointer-events:auto; font-size:12px; letter-spacing:2px; margin-bottom:6px;">GRAPHICS&nbsp; <a data-q="low" style="cursor:pointer">LOW</a> &nbsp;<a data-q="medium" style="cursor:pointer">MEDIUM</a> &nbsp;<a data-q="high" style="cursor:pointer">HIGH</a></div>
     <a id="missionlink" style="pointer-events:auto; cursor:pointer; font-size:12px; letter-spacing:2px; opacity:.55; text-decoration:underline;"></a>
   </div>
 
