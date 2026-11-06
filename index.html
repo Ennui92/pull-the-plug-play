@@ -90,7 +90,7 @@
     #dead button { color: var(--red); border-color: var(--red); text-shadow: 0 0 8px var(--red); }
     #paused { background: rgba(3,6,9,.6); cursor: pointer; }
   </style>
-  <script type="module" crossorigin src="./assets/main-z156IHAx.js"></script>
+  <script type="module" crossorigin src="./assets/main-DvRoIQI1.js"></script>
 </head>
 <body>
   <div id="app"><canvas id="c"></canvas></div>
@@ -141,6 +141,19 @@
     <div style="opacity:0.5; margin-top:12px;">CLICK ONE TO READ IT. TAB: CLOSE</div>
   </div>
   <style>#invList button { all: unset; cursor: pointer; padding: 6px 8px; border: 1px solid #2c4a52; color: #e6f4f8; } #invList button:hover { background: #16323a; }</style>
+  <div class="hud" id="report" style="display:none; pointer-events:auto; left:50%; top:12%; transform:translateX(-50%); width:min(520px,90vw); padding:16px 18px; background:rgba(8,12,16,0.95); color:#cfe6ee; font:12px/1.6 Consolas,monospace; border:1px solid #2c4a52;">
+    <b style="display:block; letter-spacing:4px; margin-bottom:6px;">REPORT A PROBLEM</b>
+    <div style="opacity:0.75; margin-bottom:8px;">Write what happened. Then copy the text, save the picture, and send both to the game's maker.</div>
+    <textarea id="reportNote" rows="4" style="width:100%; box-sizing:border-box; background:#0e161c; color:#e6f4f8; border:1px solid #2c4a52; font:12px Consolas,monospace; padding:6px;"></textarea>
+    <div id="reportWhere" style="opacity:0.6; margin:8px 0; white-space:pre-wrap;"></div>
+    <div id="reportButtons" style="display:flex; gap:8px; flex-wrap:wrap;">
+      <button id="reportCopy">COPY TEXT</button>
+      <button id="reportSave">SAVE PICTURE</button>
+      <button id="reportClose">CLOSE (F3)</button>
+    </div>
+    <div id="reportDone" style="color:#26ffa0; margin-top:6px;"></div>
+  </div>
+  <style>#reportButtons button { all: unset; cursor: pointer; padding: 6px 10px; border: 1px solid #2c4a52; color: #e6f4f8; } #reportButtons button:hover { background: #16323a; }</style>
   <div class="overlay" id="menu" style="display:flex">
     <h1>PULL THE PLUG</h1>
     <div class="mission" id="missionchip">MISSION 1 &mdash; THE CRADLE</div>
