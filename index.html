@@ -66,8 +66,30 @@
       text-shadow: 0 0 10px rgba(140,190,255,.35); background: rgba(4,8,14,.6);
       border: 1px solid rgba(150,200,255,.16); padding: 12px 18px; display: none; }
 
-    #hint { left: 50%; bottom: 44px; transform: translateX(-50%); font-size: 12px; letter-spacing: 1px;
-      opacity: 0; transition: opacity .4s; color: #bfeee6; text-shadow: 0 0 6px rgba(65,242,214,.4); }
+    /* the prompt: just under the crosshair, where the eye already is, on a dark plate (owner, 2026-11-07: too small and
+       too blue at the bottom of the screen). Keys are drawn as key caps. */
+    #hint { left: 50%; top: calc(50% + 64px); transform: translateX(-50%); max-width: min(760px, 90vw); text-align: center;
+      font-size: 17px; line-height: 1.5; letter-spacing: 2px; color: #f4fbfa; background: rgba(4,8,14,.74);
+      border: 1px solid rgba(255,255,255,.16); border-radius: 6px; padding: 9px 18px; text-shadow: 0 1px 2px #000;
+      opacity: 0; transition: opacity .3s; }
+    #hint:empty { display: none; }
+    kbd { display: inline-block; min-width: 1.7em; padding: 0 .45em; margin: 0 .15em; text-align: center; font: inherit;
+      font-weight: 700; letter-spacing: 0; color: #ffffff; background: rgba(255,255,255,.12); border: 2px solid #f4fbfa;
+      border-bottom-width: 4px; border-radius: 6px; line-height: 1.45; box-shadow: 0 0 10px rgba(65,242,214,.35); }
+
+    /* a first-time key: the world holds still and the key is shown big, until the player presses it */
+    #teach { position: fixed; inset: 0; z-index: 15; display: none; align-items: center; justify-content: center;
+      pointer-events: none; background: radial-gradient(ellipse at center, rgba(3,6,9,.25), rgba(3,6,9,.6)); }
+    #teach.on { display: flex; animation: teachin .45s ease-out; }
+    @keyframes teachin { from { opacity: 0; } to { opacity: 1; } }
+    #teach .card { text-align: center; background: rgba(4,8,14,.82); border: 1px solid rgba(65,242,214,.45);
+      border-radius: 10px; padding: 26px 40px 22px; max-width: min(620px, 88vw); box-shadow: 0 0 40px rgba(65,242,214,.18); }
+    #teach .title { font-size: 13px; letter-spacing: 6px; color: var(--teal); opacity: .9; margin-bottom: 18px; }
+    #teach .keys { font-size: 34px; margin-bottom: 18px; }
+    #teach .keys kbd { min-width: 1.6em; padding: .05em .45em; border-width: 3px; border-bottom-width: 7px; border-radius: 9px; }
+    #teach .keys .sep { font-size: 18px; opacity: .6; margin: 0 .5em; vertical-align: middle; }
+    #teach .line { font-size: 17px; line-height: 1.6; letter-spacing: 1px; color: #f4fbfa; }
+    #teach .go { margin-top: 18px; font-size: 12px; letter-spacing: 3px; opacity: .6; }
 
     .overlay { position: fixed; inset: 0; z-index: 20; display: none; align-items: center; justify-content: center;
       flex-direction: column; gap: 18px; background: rgba(3,6,9,.78); backdrop-filter: blur(3px); text-align: center; }
@@ -90,7 +112,7 @@
     #dead button { color: var(--red); border-color: var(--red); text-shadow: 0 0 8px var(--red); }
     #paused { background: rgba(3,6,9,.6); cursor: pointer; }
   </style>
-  <script type="module" crossorigin src="./assets/main-CpVE7iSY.js"></script>
+  <script type="module" crossorigin src="./assets/main-BCLuGHyk.js"></script>
 </head>
 <body>
   <div id="app"><canvas id="c"></canvas></div>
@@ -132,6 +154,7 @@
   </div>
   <div class="hud" id="subtitle"><span id="subtext"></span></div>
   <div class="hud" id="hint"></div>
+  <div id="teach"><div class="card"><div class="title"></div><div class="keys"></div><div class="line"></div><div class="go"></div></div></div>
   <div class="hud" id="paper" style="display:none; left:50%; top:30%; transform:translateX(-50%); width:min(420px,80vw); padding:18px 20px; background:#d8d6cc; color:#20242a; font:13px/1.6 Consolas,monospace; border:1px solid #6a6e72;"><b style="display:block; margin-bottom:8px; letter-spacing:1px;"></b><p style="margin:0; white-space:pre-wrap;"></p></div>
 
   <div class="hud" id="inventory" style="display:none; pointer-events:auto; left:32px; top:80px; width:min(360px,40vw); max-height:70vh; overflow:auto; padding:16px 18px; background:rgba(8,12,16,0.92); color:#cfe6ee; font:12px/1.6 Consolas,monospace; border:1px solid #2c4a52;">
